@@ -2,6 +2,6 @@ FROM nginx
 
 WORKDIR /usr/share/nginx/html
 
-COPY index.html .
+COPY pagina_traders.html .
 
 EXPOSE 80
