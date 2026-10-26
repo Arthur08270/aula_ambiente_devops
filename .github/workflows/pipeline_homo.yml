@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ "homologacao" ]
 
-jobs:
+jobs:a
   build:
     runs-on: ubuntu-latest
     steps:
@@ -29,3 +29,25 @@ jobs:
           tags: |
               arthur2700/homo_devops:latest
               arthur2700/homo_devops:${{github.sha}}
+  DEPLOY:
+    name: Implantando na EC2
+    runs-on: ubuntu-latest
+    needs: Imagem
+
+    steps:
+      - name: Deploy na EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{secrets.EC2_HOST}}
+          username: ${{secrets.EC2_USER}}
+          key: ${{secrets.EC2_KEY}}
+          script: |
+            # teste de acesso
+            echo "Acesso liberado"
+            # fazer o pull da imagem dockerhub
+            sudo docker pull ngaloni/homo_leopoldina:latest
+            # Parar o app atual remover o container
+            sudo docker stop homo_leopoldina 2>/dev/null || true
+            sudo docker rm homo_leopoldina 2>/dev/null || true
+            # Publicar novo container
+            sudo docker run --name homo_leopoldina -d -p 80:8080 ngaloni/homo_leopoldina:latest
