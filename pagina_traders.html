@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TradeLab | Estratégia acima da sorte</title>
+  <style>
+    :root {
+      --bg: #08111f;
+      --panel: #101d30;
+      --panel-light: #14243a;
+      --text: #f2f6fc;
+      --muted: #a7b5c9;
+      --green: #39e6a5;
+      --blue: #65b8ff;
+      --border: rgba(181, 204, 232, .14);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at 80% 0%, rgba(47, 124, 185, .18), transparent 35%),
+        var(--bg);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1120px, 90%); margin: 0 auto; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(8, 17, 31, .88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .brand { font-weight: 900; letter-spacing: -.8px; font-size: 1.25rem; }
+    .brand span { color: var(--green); }
+    .nav-links { display: flex; gap: 28px; color: var(--muted); font-size: .92rem; }
+    .nav-links a:hover { color: var(--green); }
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px 18px;
+      border-radius: 10px;
+      background: var(--green);
+      color: #07151b;
+      font-weight: 800;
+      border: 1px solid transparent;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .button:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(57, 230, 165, .16); }
+    .button.secondary { background: transparent; color: var(--text); border-color: var(--border); }
+
+    .hero { padding: 86px 0 72px; }
+    .hero-grid { display: grid; grid-template-columns: 1.08fr .92fr; align-items: center; gap: 52px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 9px;
+      color: var(--green); font-size: .78rem; font-weight: 800;
+      letter-spacing: 1.6px; text-transform: uppercase;
+      padding: 7px 11px; border: 1px solid rgba(57, 230, 165, .22);
+      background: rgba(57, 230, 165, .06); border-radius: 999px;
+    }
+    .eyebrow::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 14px var(--green); }
+    h1 { font-size: clamp(2.6rem, 5vw, 4.7rem); line-height: 1.04; letter-spacing: -2.8px; margin: 22px 0; }
+    h1 span { color: var(--green); }
+    .hero p { max-width: 600px; color: var(--muted); font-size: 1.08rem; margin-bottom: 28px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .microcopy { display: block; margin-top: 18px; color: #7f91a9; font-size: .8rem; }
+
+    .market-card {
+      position: relative; overflow: hidden;
+      padding: 24px; border: 1px solid var(--border); border-radius: 22px;
+      background: linear-gradient(145deg, rgba(20, 36, 58, .97), rgba(13, 25, 42, .96));
+      box-shadow: 0 24px 70px rgba(0,0,0,.22);
+    }
+    .market-card::after {
+      content: ""; position: absolute; width: 220px; height: 220px; right: -110px; top: -120px;
+      background: rgba(57, 230, 165, .12); filter: blur(60px); border-radius: 50%; pointer-events: none;
+    }
+    .card-top { display: flex; justify-content: space-between; align-items: start; gap: 16px; }
+    .card-label { color: var(--muted); font-size: .85rem; }
+    .market-value { font-size: 2rem; font-weight: 800; letter-spacing: -.8px; margin-top: 3px; }
+    .positive { color: var(--green); font-weight: 700; font-size: .9rem; }
+    .live { color: var(--green); font-size: .75rem; border: 1px solid rgba(57,230,165,.25); border-radius: 999px; padding: 5px 9px; }
+    .chart { width: 100%; height: auto; margin: 22px 0 12px; display: block; }
+    .chart-legend { display: flex; justify-content: space-between; color: #7588a2; font-size: .75rem; }
+    .market-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 24px; }
+    .stat { padding: 13px; border: 1px solid var(--border); border-radius: 12px; background: rgba(255,255,255,.02); }
+    .stat small { display: block; color: var(--muted); font-size: .75rem; }
+    .stat strong { display: block; margin-top: 4px; font-size: .95rem; }
+
+    section { padding: 72px 0; }
+    .section-head { max-width: 650px; margin-bottom: 32px; }
+    .section-kicker { color: var(--green); text-transform: uppercase; letter-spacing: 1.6px; font-weight: 800; font-size: .76rem; }
+    h2 { margin: 8px 0 12px; font-size: clamp(1.8rem, 3.5vw, 2.7rem); letter-spacing: -1.2px; line-height: 1.15; }
+    .section-head p { color: var(--muted); margin: 0; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .info-card { padding: 25px; background: var(--panel); border: 1px solid var(--border); border-radius: 18px; }
+    .icon {
+      display: grid; place-items: center; width: 46px; height: 46px; margin-bottom: 18px;
+      color: var(--green); background: rgba(57,230,165,.08); border: 1px solid rgba(57,230,165,.16); border-radius: 13px; font-size: 1.25rem;
+    }
+    .info-card h3 { margin: 0 0 8px; font-size: 1.12rem; }
+    .info-card p { color: var(--muted); font-size: .92rem; margin: 0; }
+
+    .risk-section { background: linear-gradient(180deg, transparent, rgba(20,36,58,.46), transparent); }
+    .risk-grid { display: grid; grid-template-columns: .9fr 1.1fr; gap: 44px; align-items: center; }
+    .check-list { list-style: none; padding: 0; margin: 24px 0 0; }
+    .check-list li { display: flex; gap: 12px; margin: 14px 0; color: var(--muted); }
+    .check-list li::before { content: "✓"; display: grid; place-items: center; flex: 0 0 23px; height: 23px; border-radius: 50%; color: var(--green); background: rgba(57,230,165,.1); font-weight: 900; }
+    .quote-card { padding: 30px; border: 1px solid var(--border); border-radius: 20px; background: var(--panel); }
+    .quote-card blockquote { font-size: 1.35rem; line-height: 1.45; margin: 0 0 18px; letter-spacing: -.3px; }
+    .quote-card p { color: var(--muted); margin: 0; font-size: .9rem; }
+
+    .cta { text-align: center; padding: 58px 26px; background: linear-gradient(135deg, rgba(57,230,165,.10), rgba(101,184,255,.08)); border: 1px solid var(--border); border-radius: 24px; }
+    .cta p { color: var(--muted); max-width: 590px; margin: 0 auto 24px; }
+    footer { border-top: 1px solid var(--border); padding: 28px 0; color: #8393a9; font-size: .8rem; }
+    .footer-content { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+
+    @media (max-width: 850px) {
+      .hero-grid, .risk-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 58px; }
+      .market-card { max-width: 620px; }
+      .cards { grid-template-columns: 1fr 1fr; }
+      .nav-links { gap: 15px; }
+    }
+    @media (max-width: 600px) {
+      .nav { padding: 15px 0; flex-wrap: wrap; }
+      .nav-links { order: 3; width: 100%; justify-content: space-between; font-size: .83rem; }
+      .nav > .button { padding: 9px 12px; font-size: .84rem; }
+      .hero { padding: 46px 0; }
+      h1 { letter-spacing: -1.7px; }
+      section { padding: 52px 0; }
+      .cards { grid-template-columns: 1fr; }
+      .market-card { padding: 18px; }
+      .market-stats { grid-template-columns: 1fr; }
+      .stat { display: flex; justify-content: space-between; align-items: center; }
+      .stat strong { margin-top: 0; }
+      .footer-content { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#inicio">TRADE<span>LAB</span>.</a>
+      <nav class="nav-links" aria-label="Navegação principal">
+        <a href="#mercado">O mercado</a>
+        <a href="#estrategias">Estratégias</a>
+        <a href="#risco">Gestão de risco</a>
+      </nav>
+      <a class="button" href="#comecar">Explore o tema ↗</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">Mentalidade de mercado</span>
+          <h1>Menos impulso.<br>Mais <span>estratégia.</span></h1>
+          <p>O universo do trading combina análise, disciplina e decisões sob incerteza. Conheça os conceitos que ajudam traders a estudar o mercado e a pensar antes de agir.</p>
+          <div class="hero-actions">
+            <a class="button" href="#estrategias">Conheça as estratégias</a>
+            <a class="button secondary" href="#risco">Entenda os riscos</a>
+          </div>
+          <small class="microcopy">Conteúdo educativo. Não é recomendação de investimento.</small>
+        </div>
+
+        <aside class="market-card" aria-label="Painel ilustrativo de mercado">
+          <div class="card-top">
+            <div>
+              <div class="card-label">Painel demonstrativo</div>
+              <div class="market-value">TRD / LAB</div>
+              <div class="positive">↗ Tendência ilustrativa</div>
+            </div>
+            <span class="live">● DEMO</span>
+          </div>
+          <svg class="chart" viewBox="0 0 520 220" role="img" aria-label="Gráfico ilustrativo com linha de tendência ascendente">
+            <defs>
+              <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#39e6a5" stop-opacity=".28" />
+                <stop offset="100%" stop-color="#39e6a5" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <g stroke="rgba(181,204,232,.12)" stroke-width="1">
+              <line x1="0" y1="35" x2="520" y2="35" />
+              <line x1="0" y1="80" x2="520" y2="80" />
+              <line x1="0" y1="125" x2="520" y2="125" />
+              <line x1="0" y1="170" x2="520" y2="170" />
+            </g>
+            <path d="M0 174 L32 157 L59 166 L91 130 L120 143 L154 103 L182 119 L215 96 L244 110 L275 69 L305 84 L336 54 L365 73 L397 39 L426 56 L455 25 L484 38 L520 12 L520 220 L0 220 Z" fill="url(#area)" />
+            <polyline points="0,174 32,157 59,166 91,130 120,143 154,103 182,119 215,96 244,110 275,69 305,84 336,54 365,73 397,39 426,56 455,25 484,38 520,12" fill="none" stroke="#39e6a5" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="520" cy="12" r="5" fill="#39e6a5" stroke="#08111f" stroke-width="3" />
+          </svg>
+          <div class="chart-legend"><span>INÍCIO</span><span>EVOLUÇÃO ILUSTRATIVA</span><span>AGORA</span></div>
+          <div class="market-stats">
+            <div class="stat"><small>Foco</small><strong>Processo</strong></div>
+            <div class="stat"><small>Ferramenta</small><strong>Análise</strong></div>
+            <div class="stat"><small>Prioridade</small><strong>Risco</strong></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="mercado">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-kicker">Primeiros conceitos</span>
+          <h2>O que faz parte do trading?</h2>
+          <p>Trading é a compra e venda de ativos financeiros buscando aproveitar movimentos de preço. O resultado é incerto, e perdas fazem parte dos riscos da atividade.</p>
+        </div>
+        <div class="cards">
+          <article class="info-card">
+            <div class="icon">⌁</div>
+            <h3>Análise de mercado</h3>
+            <p>Estudo de preços, volume, notícias e fundamentos para compreender cenários possíveis, sem prever o futuro com certeza.</p>
+          </article>
+          <article class="info-card">
+            <div class="icon">◷</div>
+            <h3>Estilos de operação</h3>
+            <p>Day trade, swing trade e position trade diferem principalmente pelo horizonte de tempo das operações.</p>
+          </article>
+          <article class="info-card">
+            <div class="icon">◎</div>
+            <h3>Disciplina emocional</h3>
+            <p>Seguir critérios previamente definidos ajuda a reduzir decisões impulsivas motivadas por medo, euforia ou pressa.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="estrategias">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-kicker">Abordagens comuns</span>
+          <h2>Cada trader tem um método</h2>
+          <p>Não existe estratégia que funcione em todas as condições. Métodos precisam ser estudados, testados e avaliados considerando custos e riscos.</p>
+        </div>
+        <div class="cards">
+          <article class="info-card">
+            <div class="icon">↗</div>
+            <h3>Seguir tendências</h3>
+            <p>Busca identificar movimentos direcionais e avaliar se há condições para acompanhá-los, sabendo que tendências podem mudar.</p>
+          </article>
+          <article class="info-card">
+            <div class="icon">⇄</div>
+            <h3>Suporte e resistência</h3>
+            <p>Observa regiões de preço em que o mercado já reagiu. Essas regiões são referências, não garantias de reversão.</p>
+          </article>
+          <article class="info-card">
+            <div class="icon">▤</div>
+            <h3>Análise fundamentalista</h3>
+            <p>Considera indicadores econômicos, resultados empresariais e outros fatores que podem influenciar o valor de um ativo.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="risk-section" id="risco">
+      <div class="container risk-grid">
+        <div>
+          <span class="section-kicker">Antes de operar</span>
+          <h2>Gestão de risco não é opcional.</h2>
+          <p style="color: var(--muted);">Uma boa análise não elimina a possibilidade de perder dinheiro. Gerenciar o risco significa reconhecer essa incerteza antes de tomar uma decisão.</p>
+          <ul class="check-list">
+            <li>Estude antes de usar dinheiro real.</li>
+            <li>Defina limites de perda e respeite-os.</li>
+            <li>Entenda taxas, alavancagem e liquidez.</li>
+            <li>Desconfie de promessas de lucro garantido.</li>
+          </ul>
+        </div>
+        <aside class="quote-card">
+          <blockquote>“O objetivo não é acertar todas as operações. É ter um processo consciente para lidar com a incerteza.”</blockquote>
+          <p>Princípio educativo de gestão de risco. Não representa uma promessa de rentabilidade.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="comecar">
+      <div class="container">
+        <div class="cta">
+          <span class="section-kicker">Seu próximo passo</span>
+          <h2>Aprenda. Simule. Avalie.</h2>
+          <p>Comece pelos fundamentos, pratique em simuladores e mantenha um registro das decisões. Conhecimento e preparação não eliminam o risco, mas ajudam a entendê-lo.</p>
+          <a class="button" href="#inicio">Voltar ao início ↑</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      <span>© 2026 TradeLab. Página demonstrativa para fins educacionais.</span>
+      <span>Trading envolve riscos e pode causar perdas financeiras.</span>
+    </div>
+  </footer>
+</body>
+</html>
